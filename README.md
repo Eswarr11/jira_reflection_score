@@ -85,12 +85,13 @@ Quality Score = 609 / 685 = 88.91%
 
 ## Configuration
 
-### Settings (Optional)
-Click ⚙️ Settings to modify:
-- Jira URL (default: https://surveysparrow.atlassian.net)
-- Email (default: eswar.a@surveysparrow.com)
-- API Token (pre-configured)
+### Settings
+Click ⚙️ Settings to configure:
+- Jira URL (e.g., https://your-domain.atlassian.net)
+- Email (your Jira account email)
+- API Token (generate from Atlassian)
 - Scoring Method (default: Priority Based)
+- Priority Weights (for priority-based scoring)
 
 ### Custom Field IDs
 If your Jira uses different custom fields, edit `background.js`:
@@ -104,25 +105,25 @@ If your Jira uses different custom fields, edit `background.js`:
 - `background.js` - API integration
 - `popup.html/js` - Main UI
 - `options.html/js` - Settings page
+- `content.js` - Content script for Jira pages
 - `styles/*.css` - Styling
 - `icons/*.png` - Extension icons
 
 **Documentation:**
 - `README.md` - This file
-- `QUALITY_SCORE_GUIDE.md` - Detailed scoring explanation
-- `CHANGELOG.md` - Version history
-- `SECURITY_WARNING.md` - Security notes
 - `LICENSE` - MIT License
 
 ## 🔒 Security
 
 Your Jira credentials are:
-- ✅ Stored locally in Chrome's sync storage
+- ✅ Stored securely in Chrome's sync storage (encrypted by Chrome)
 - ✅ Never sent to any server except your Jira instance
 - ✅ Not included in the source code
 - ⚠️ **Important**: Keep your API token secure and never commit it to version control
 
 Generate your API token at: https://id.atlassian.com/manage-profile/security/api-tokens
+
+**Note:** This extension stores credentials locally. No hardcoded credentials are present in the code.
 
 ## Troubleshooting
 
@@ -143,18 +144,12 @@ Generate your API token at: https://id.atlassian.com/manage-profile/security/api
 - Tickets might not have the required fields
 - Try different scoring method in Settings
 
-## Documentation
-
-- **Quality Score Details**: See `QUALITY_SCORE_GUIDE.md`
-- **Version History**: See `CHANGELOG.md`
-- **Security Info**: See `SECURITY_WARNING.md`
-
 ## Support
 
 For issues:
 1. Check browser console (F12) for errors
 2. Verify Jira API token is valid
-3. Review `QUALITY_SCORE_GUIDE.md` for scoring details
+3. Test connection in Settings page
 
 ## License
 
@@ -162,6 +157,6 @@ MIT License - See LICENSE file
 
 ---
 
-**Version**: 1.1.2  
+**Version**: 1.2.0  
 **Last Updated**: October 14, 2025  
-**Status**: Production Ready
+**Status**: Production Ready - Clean Codebase

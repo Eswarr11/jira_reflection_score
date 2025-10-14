@@ -44,7 +44,6 @@ async function handleFetchTickets(data, sendResponse) {
     }
 
     const jqlQuery = data.jqlQuery || 'order by created DESC';
-    //const maxResults = data.maxResults || 100;
 
     // Clean Jira URL (remove trailing slash)
     let jiraUrl = settings.jiraUrl;
@@ -466,4 +465,3 @@ async function handleTestConnection(data, sendResponse) {
     });
   }
 }
-

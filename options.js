@@ -18,26 +18,19 @@ async function loadSettings() {
     'jiraApiToken',
     'scoringMethod',
     'customField',
-    'priorityWeights'
+    'priorityWeights',
+    'credentialsInitialized'
   ]);
   
-  // Populate form fields
-  if (settings.jiraUrl) {
-    document.getElementById('jiraUrl').value = settings.jiraUrl;
-  }
-  if (settings.jiraEmail) {
-    document.getElementById('jiraEmail').value = settings.jiraEmail;
-  }
-  if (settings.jiraApiToken) {
-    document.getElementById('jiraApiToken').value = settings.jiraApiToken;
-  }
-  if (settings.scoringMethod) {
-    document.getElementById('scoringMethod').value = settings.scoringMethod;
-    handleScoringMethodChange({ target: { value: settings.scoringMethod } });
-  } else {
-    // Set default to priority based
-    document.getElementById('scoringMethod').value = 'priority';
-  }
+  // Populate form fields with saved settings
+  document.getElementById('jiraUrl').value = settings.jiraUrl || '';
+  document.getElementById('jiraEmail').value = settings.jiraEmail || '';
+  document.getElementById('jiraApiToken').value = settings.jiraApiToken || '';
+  
+  const scoringMethod = settings.scoringMethod || 'priority';
+  document.getElementById('scoringMethod').value = scoringMethod;
+  handleScoringMethodChange({ target: { value: scoringMethod } });
+  
   if (settings.customField) {
     document.getElementById('customField').value = settings.customField;
   }
@@ -168,4 +161,3 @@ function showMessage(text, type) {
     }, 5000);
   }
 }
-

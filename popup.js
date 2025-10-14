@@ -632,4 +632,3 @@ function openFullScreen() {
   const url = chrome.runtime.getURL('popup.html');
   chrome.tabs.create({ url: url });
 }
-
