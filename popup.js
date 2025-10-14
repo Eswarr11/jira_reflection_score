@@ -1,8 +1,20 @@
 // Popup script for Jira Score Calculator
 
+// ============================================================================
+// DEFAULT JIRA CREDENTIALS (COMMENT OUT BEFORE PUSHING TO GIT)
+// ============================================================================
+const DEFAULT_CREDENTIALS = {
+  jiraUrl: 'https://yourdomain.atlassian.net',
+  jiraEmail: 'abc@company.com',
+  jiraApiToken: 'Your API token'
+};
+// ============================================================================
+
 let currentTemplate = 'teg';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Initialize default credentials if needed
+  await initializeDefaultCredentials();
   // Check if opened in tab (full screen mode)
   const urlParams = new URLSearchParams(window.location.search);
   const isFullScreen = window.location.pathname.includes('popup.html') && !chrome.extension.getViews({type: 'popup'}).length;
@@ -66,6 +78,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initial JQL preview
   updateJqlPreview();
 });
+
+// Initialize default credentials (priority: saved credentials > default credentials)
+async function initializeDefaultCredentials() {
+  const settings = await chrome.storage.sync.get([
+    'jiraUrl',
+    'jiraEmail',
+    'jiraApiToken'
+  ]);
+  
+  // Only set defaults if credentials are not already saved
+  const needsInitialization = !settings.jiraUrl || !settings.jiraEmail || !settings.jiraApiToken;
+  
+  if (needsInitialization && DEFAULT_CREDENTIALS) {
+    await chrome.storage.sync.set({
+      jiraUrl: DEFAULT_CREDENTIALS.jiraUrl,
+      jiraEmail: DEFAULT_CREDENTIALS.jiraEmail,
+      jiraApiToken: DEFAULT_CREDENTIALS.jiraApiToken
+    });
+    console.log('Default credentials initialized in popup');
+  }
+}
 
 // Check if Jira credentials are configured
 async function checkConnectionStatus() {

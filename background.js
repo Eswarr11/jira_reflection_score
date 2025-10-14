@@ -1,8 +1,21 @@
 // Background Service Worker for Jira Score Calculator
 
+// ============================================================================
+// DEFAULT JIRA CREDENTIALS (COMMENT OUT BEFORE PUSHING TO GIT)
+// ============================================================================
+const DEFAULT_CREDENTIALS = {
+  jiraUrl: 'https://yourdomain.atlassian.net',
+  jiraEmail: 'abc@company.com',
+  jiraApiToken: 'Your API token'
+};
+// ============================================================================
+
 // Listen for extension installation
-chrome.runtime.onInstalled.addListener((details) => {
+chrome.runtime.onInstalled.addListener(async (details) => {
   console.log('Jira Score Calculator installed');
+  
+  // Initialize default credentials on install/update
+  await initializeDefaultCredentials();
 });
 
 // Handle messages from popup and content scripts
@@ -22,6 +35,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 });
+
+// Initialize default credentials (priority: saved credentials > default credentials)
+async function initializeDefaultCredentials() {
+  const settings = await chrome.storage.sync.get([
+    'jiraUrl',
+    'jiraEmail',
+    'jiraApiToken'
+  ]);
+  
+  // Only set defaults if credentials are not already saved
+  const needsInitialization = !settings.jiraUrl || !settings.jiraEmail || !settings.jiraApiToken;
+  
+  if (needsInitialization && DEFAULT_CREDENTIALS) {
+    await chrome.storage.sync.set({
+      jiraUrl: DEFAULT_CREDENTIALS.jiraUrl,
+      jiraEmail: DEFAULT_CREDENTIALS.jiraEmail,
+      jiraApiToken: DEFAULT_CREDENTIALS.jiraApiToken
+    });
+    console.log('Default credentials initialized in background');
+  }
+}
 
 // Fetch tickets from Jira API
 async function handleFetchTickets(data, sendResponse) {

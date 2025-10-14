@@ -118,12 +118,34 @@ If your Jira uses different custom fields, edit `background.js`:
 Your Jira credentials are:
 - ✅ Stored securely in Chrome's sync storage (encrypted by Chrome)
 - ✅ Never sent to any server except your Jira instance
-- ✅ Not included in the source code
 - ⚠️ **Important**: Keep your API token secure and never commit it to version control
 
 Generate your API token at: https://id.atlassian.com/manage-profile/security/api-tokens
 
-**Note:** This extension stores credentials locally. No hardcoded credentials are present in the code.
+### Default Credentials (For Development)
+
+The extension includes support for default credentials that can be set for local development. To use this feature:
+
+1. **Adding Default Credentials**: Look for the `DEFAULT_CREDENTIALS` section (marked with clear comments) at the top of these files:
+   - `options.js` (lines 3-11)
+   - `background.js` (lines 3-11)
+   - `popup.js` (lines 3-11)
+
+2. **Before Pushing to Git**: Comment out or remove the `DEFAULT_CREDENTIALS` object:
+   ```javascript
+   // const DEFAULT_CREDENTIALS = {
+   //   jiraUrl: 'your-url',
+   //   jiraEmail: 'your-email',
+   //   jiraApiToken: 'your-token'
+   // };
+   ```
+
+3. **Restoring for Local Use**: Simply uncomment the credentials when working locally.
+
+**Priority System**: The extension uses a priority-based system:
+- Saved credentials (from Settings page) always take precedence
+- Default credentials only load if no saved credentials exist
+- This ensures your saved settings are never overwritten
 
 ## Troubleshooting
 

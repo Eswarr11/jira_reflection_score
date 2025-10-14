@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+._*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Chrome Extension
+*.crx
+*.pem
+*.zip
+
+# Node modules (if using build tools)
+node_modules/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# IMPORTANT: Before committing, ensure DEFAULT_CREDENTIALS are commented out in:
+# - options.js (lines 3-11)
+# - background.js (lines 3-11)
+# - popup.js (lines 3-11)
+# 
+# Run: ./toggle-credentials.sh comment
+
