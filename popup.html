@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jira Score Calculator</title>
+  <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <h1>Jira Ticket Score Calculator</h1>
+        <button id="expandBtn" class="expand-btn" title="Open in full screen tab">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+          </svg>
+          <span>Expand</span>
+        </button>
+      </div>
+    </header>
+    
+    <div class="connection-status" id="connectionStatus">
+      <span class="status-indicator" id="statusIndicator"></span>
+      <span id="statusText">Not Connected</span>
+    </div>
+
+    <div class="main-content">
+      <div class="section">
+        <h2>Fetch Tickets</h2>
+        
+        <!-- Quick Filters -->
+        <div class="quick-filters">
+          <button class="filter-btn" data-template="custom">Custom Query</button>
+          <button class="filter-btn active" data-template="teg">TEG Base Query</button>
+        </div>
+
+        <!-- TEG Query Builder -->
+        <div id="tegQueryBuilder" class="query-builder">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="projectName">Project: <span class="optional">(optional)</span></label>
+              <input type="text" id="projectName" value="TEG" placeholder="Leave empty for all projects" />
+            </div>
+            <div class="form-group">
+              <label for="issueType">Type: <span class="optional">(optional)</span></label>
+              <select id="issueType">
+                <option value="">All Types</option>
+                <option value="Bug" selected>Bug</option>
+                <option value="Story">Story</option>
+                <option value="Task">Task</option>
+                <option value="Epic">Epic</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startDate">Start Date: <span class="optional">(optional)</span></label>
+              <div class="date-input-group">
+                <input type="date" id="startDate" value="2025-08-25" />
+                <button type="button" class="clear-date-btn" data-target="startDate" title="Clear date">×</button>
+              </div>
+              <span class="help-text-small">Click × to clear date filter</span>
+            </div>
+            <div class="form-group">
+              <label for="endDate">End Date: <span class="optional">(optional)</span></label>
+              <div class="date-input-group">
+                <input type="date" id="endDate" value="2025-10-13" />
+                <button type="button" class="clear-date-btn" data-target="endDate" title="Clear date">×</button>
+              </div>
+              <span class="help-text-small">Click × to clear date filter</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="thriveSquad">Thrive Squad: <span class="optional">(optional)</span></label>
+              <input type="text" id="thriveSquad" value="OKR" placeholder="Leave empty for all squads" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="excludeStatuses">Exclude Statuses: <span class="optional">(optional)</span></label>
+            <div class="checkbox-group">
+              <label><input type="checkbox" value="Closed" checked> Closed</label>
+              <label><input type="checkbox" value="DEFERRED" checked> DEFERRED</label>
+              <label><input type="checkbox" value="Invalid" checked> Invalid</label>
+            </div>
+            <span class="help-text-small">Uncheck all to include all statuses</span>
+          </div>
+
+          <div class="generated-jql">
+            <label>Generated JQL:</label>
+            <div id="generatedJql" class="jql-display"></div>
+          </div>
+          
+          <div style="margin-top: 10px; text-align: right;">
+            <button type="button" id="resetFilters" class="secondary-btn" style="font-size: 12px; padding: 6px 12px;">
+              Reset to Defaults
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom JQL Input -->
+        <div id="customQueryInput" class="query-builder" style="display: none;">
+          <div class="form-group">
+            <label for="jqlQuery">Custom JQL Query:</label>
+            <textarea id="jqlQuery" placeholder="e.g., project = MYPROJECT AND status = Done" rows="5"></textarea>
+          </div>
+        </div>
+
+        <button id="fetchTickets" class="btn btn-primary">Fetch Tickets</button>
+      </div>
+
+      <div class="section">
+        <h2>Score Results</h2>
+        <div id="status" class="status-message hidden"></div>
+        <div id="loading" class="loading hidden">
+          <div class="spinner"></div>
+          <p>Loading tickets from Jira...</p>
+          <p style="font-size: 12px; color: #888; margin-top: 5px;">This may take a moment for large datasets</p>
+        </div>
+        
+        <div id="results" class="results hidden">
+          <!-- Quality Score Card -->
+          <div class="quality-score-card">
+            <div class="quality-header">
+              <h3>Quality Score</h3>
+              <div class="quality-percentage" id="qualityPercentage">0%</div>
+            </div>
+            <div class="quality-stats">
+              <div class="stat-item">
+                <span class="stat-label">Fixed Tickets:</span>
+                <span class="stat-value" id="fixedTickets">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Total Tickets:</span>
+                <span class="stat-value" id="totalTicketsQuality">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Fixed Score:</span>
+                <span class="stat-value" id="fixedScore">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Total Score:</span>
+                <span class="stat-value" id="totalScoreQuality">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Priority Breakdown Table -->
+          <div class="priority-breakdown">
+            <h3>Priority Breakdown <span style="font-size: 12px; font-weight: normal; color: #888;">(Hover ↗ to view in Jira)</span></h3>
+            <table class="breakdown-table" id="breakdownTable">
+              <thead>
+                <tr>
+                  <th>Priority</th>
+                  <th>Points</th>
+                  <th>Total</th>
+                  <th>Total Score</th>
+                  <th>Fixed</th>
+                  <th>Fixed Score</th>
+                  <th>Open</th>
+                </tr>
+              </thead>
+              <tbody id="breakdownBody">
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Support Tickets Status Breakdown -->
+          <div class="support-tickets-section hidden" id="supportSection">
+            <h3>Support Tickets Status Breakdown</h3>
+            <div class="support-summary">
+              <span class="support-label">Total Raised:</span>
+              <span class="support-total" id="supportTotal">0</span>
+            </div>
+            <table class="breakdown-table support-table" id="supportTable">
+              <thead>
+                <tr id="supportTableHeader">
+                  <!-- Status columns will be dynamically added -->
+                </tr>
+              </thead>
+              <tbody id="supportTableBody">
+                <!-- Status counts will be dynamically added -->
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Ticket List -->
+          <div class="ticket-list-header">
+            <h3>Open Tickets <span style="font-size: 12px; font-weight: normal; color: #888;">(Sorted by Priority)</span></h3>
+          </div>
+          <div class="ticket-list" id="ticketList"></div>
+        </div>
+
+        <div id="error" class="error-message hidden"></div>
+      </div>
+    </div>
+
+    <footer>
+      <button id="openSettings" class="btn btn-secondary">⚙️ Settings</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+
