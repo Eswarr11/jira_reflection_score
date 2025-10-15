@@ -25,9 +25,6 @@ class CredentialStore {
         jiraEmail: config.jira.email,
         jiraApiToken: config.jira.apiToken
       };
-      console.log('✅ Loaded Jira credentials from environment variables');
-    } else {
-      console.log('⚠️  No credentials in environment - waiting for user to configure in UI');
     }
   }
 
@@ -40,7 +37,6 @@ class CredentialStore {
       jiraEmail,
       jiraApiToken
     };
-    console.log('✅ Credentials saved to memory store');
   }
 
   /**
@@ -70,7 +66,6 @@ class CredentialStore {
       jiraEmail: null,
       jiraApiToken: null
     };
-    console.log('🗑️  Credentials cleared from memory store');
   }
 }
 

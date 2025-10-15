@@ -130,7 +130,6 @@ function blockScriptInjection(req, res, next) {
   const checkValue = (value, path = '') => {
     if (typeof value === 'string') {
       if (!validateNoScripts(value)) {
-        console.warn(`⚠️  Script injection attempt detected in ${path}:`, value);
         return false;
       }
     } else if (Array.isArray(value)) {

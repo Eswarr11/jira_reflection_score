@@ -30,7 +30,6 @@ class AuthService {
       expiresAt
     });
 
-    console.log(`✅ Session created: ${token.substring(0, 8)}...`);
     return token;
   }
 
@@ -51,7 +50,6 @@ class AuthService {
     // Check if session has expired
     if (Date.now() > session.expiresAt) {
       this.sessions.delete(token);
-      console.log(`⏰ Session expired: ${token.substring(0, 8)}...`);
       return false;
     }
 
@@ -64,7 +62,6 @@ class AuthService {
   destroySession(token) {
     if (this.sessions.has(token)) {
       this.sessions.delete(token);
-      console.log(`🗑️  Session destroyed: ${token.substring(0, 8)}...`);
       return true;
     }
     return false;
@@ -82,10 +79,6 @@ class AuthService {
         this.sessions.delete(token);
         cleaned++;
       }
-    }
-
-    if (cleaned > 0) {
-      console.log(`🧹 Cleaned ${cleaned} expired session(s)`);
     }
   }
 

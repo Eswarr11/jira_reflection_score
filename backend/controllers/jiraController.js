@@ -24,7 +24,6 @@ class JiraController {
         hasToken: !!credentials.jiraApiToken
       });
     } catch (error) {
-      console.error('Error checking credentials:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -65,7 +64,6 @@ class JiraController {
         message: 'Credentials saved successfully and session created'
       });
     } catch (error) {
-      console.error('Error saving credentials:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -91,7 +89,6 @@ class JiraController {
         message: 'Logged out successfully'
       });
     } catch (error) {
-      console.error('Error during logout:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -116,7 +113,6 @@ class JiraController {
       const result = await jiraService.testConnection(jiraUrl, jiraEmail, jiraApiToken);
       res.json(result);
     } catch (error) {
-      console.error('Connection test failed:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -163,7 +159,6 @@ class JiraController {
         data: result
       });
     } catch (error) {
-      console.error('Error fetching tickets:', error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -201,7 +196,6 @@ class JiraController {
         data: result
       });
     } catch (error) {
-      console.error('Error fetching support tickets:', error);
       res.status(500).json({
         success: false,
         error: error.message

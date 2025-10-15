@@ -27,13 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(sanitizeRequest);
 app.use(blockScriptInjection);
 
-// Request logging (development only)
-if (config.nodeEnv === 'development') {
-  app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path}`);
-    next();
-  });
-}
+// Request logging removed for production
 
 // Serve static frontend files
 const frontendPath = path.join(__dirname, '../frontend');
@@ -66,30 +60,7 @@ app.use(errorHandler);
 
 // Start server
 app.listen(config.port, () => {
-  console.log(`
-╔════════════════════════════════════════════════════════════╗
-║                                                            ║
-║  🚀 Jira Score Calculator Server                          ║
-║                                                            ║
-║  Environment: ${config.nodeEnv.padEnd(44)}║
-║  Frontend:    http://localhost:${config.port}${' '.repeat(32)}║
-║  Backend:     http://localhost:${config.port}${config.api.prefix}${' '.repeat(29)}║
-║  Health:      http://localhost:${config.port}/health${' '.repeat(26)}║
-║                                                            ║
-║  🛡️  Security: XSS Protection ENABLED                     ║
-║  🔒 Script injection attempts will be blocked             ║
-║  🍪 Cookie-based authentication ENABLED                   ║
-║                                                            ║
-║  API Endpoints:                                            ║
-║  • POST ${config.api.prefix}/save-credentials${' '.repeat(27)}║
-║  • POST ${config.api.prefix}/test-connection${' '.repeat(30)}║
-║  • POST ${config.api.prefix}/fetch-tickets (🔒 Protected)${' '.repeat(15)}║
-║  • POST ${config.api.prefix}/fetch-support-tickets (🔒 Protected)${' '.repeat(5)}║
-║                                                            ║
-║  Press Ctrl+C to stop                                      ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-  `);
+  // Server started
 });
 
 module.exports = app;

@@ -107,7 +107,6 @@ async function checkConnectionStatus() {
     statusIndicator.classList.remove('connected');
     statusIndicator.classList.add('disconnected');
     statusText.textContent = 'Server Error';
-    console.error('Error checking connection status:', error);
   }
 }
 
@@ -296,10 +295,6 @@ async function fetchTickets() {
     }
     
     if (result.success) {
-      if (result.data.paginationInfo && result.data.paginationInfo.hadMultiplePages) {
-        console.log(`Fetched ${result.data.paginationInfo.pagesFetched} pages of results`);
-      }
-      
       displayResults(result.data);
       
       // Fetch support tickets
@@ -324,7 +319,7 @@ async function fetchTickets() {
             }
           }
         } catch (supportError) {
-          console.warn('Error fetching support tickets:', supportError);
+          // Silently fail for support tickets
         }
       }
       

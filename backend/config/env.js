@@ -27,11 +27,7 @@ function validateConfig() {
   const required = ['JIRA_URL', 'JIRA_EMAIL', 'JIRA_API_TOKEN'];
   const missing = required.filter(key => !process.env[key]);
   
-  if (missing.length > 0) {
-    console.warn(`⚠️  Warning: Missing environment variables: ${missing.join(', ')}`);
-    console.warn('   The application will still start, but Jira API calls will fail.');
-    console.warn('   Please configure these in your .env file.');
-  }
+  // Silent validation - credentials can be configured via UI
 }
 
 validateConfig();
