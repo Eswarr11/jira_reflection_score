@@ -365,6 +365,13 @@ function displayResults(data) {
     const breakdownBody = document.getElementById('breakdownBody');
     breakdownBody.innerHTML = '';
     
+    // Calculate totals
+    let totalCount = 0;
+    let totalScore = 0;
+    let fixedCount = 0;
+    let fixedScore = 0;
+    let openCount = 0;
+    
     data.qualityScore.breakdown.forEach(item => {
       const row = document.createElement('tr');
       
@@ -372,7 +379,14 @@ function displayResults(data) {
       const fixedJql = buildJqlForPriority(item.priority, 'fixed');
       const openJql = buildJqlForPriority(item.priority, 'open');
       
-      const openCount = item.totalCount - item.fixedCount;
+      const itemOpenCount = item.totalCount - item.fixedCount;
+      
+      // Add to totals
+      totalCount += item.totalCount;
+      totalScore += item.totalScore;
+      fixedCount += item.fixedCount;
+      fixedScore += item.fixedScore;
+      openCount += itemOpenCount;
       
       row.innerHTML = `
         <td class="priority-cell priority-${escapeHtml(item.priority.toLowerCase())}">${escapeHtml(item.priority)}</td>
@@ -393,13 +407,27 @@ function displayResults(data) {
         <td>${escapeHtml(item.fixedScore)}</td>
         <td>
           <div class="cell-with-link">
-            <span>${escapeHtml(openCount)}</span>
+            <span>${escapeHtml(itemOpenCount)}</span>
             <a href="${escapeHtml(jiraUrl)}/issues/?jql=${encodeURIComponent(openJql)}" target="_blank" class="jira-link">↗</a>
           </div>
         </td>
       `;
       breakdownBody.appendChild(row);
     });
+    
+    // Add totals row
+    const totalsRow = document.createElement('tr');
+    totalsRow.className = 'totals-row';
+    totalsRow.innerHTML = `
+      <td style="font-weight: bold;">Total</td>
+      <td></td>
+      <td style="font-weight: bold;">${escapeHtml(totalCount)}</td>
+      <td style="font-weight: bold;">${escapeHtml(totalScore)}</td>
+      <td style="font-weight: bold;">${escapeHtml(fixedCount)}</td>
+      <td style="font-weight: bold;">${escapeHtml(fixedScore)}</td>
+      <td style="font-weight: bold;">${escapeHtml(openCount)}</td>
+    `;
+    breakdownBody.appendChild(totalsRow);
   }
   
   const ticketListEl = document.getElementById('ticketList');

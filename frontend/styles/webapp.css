@@ -230,6 +230,21 @@ footer {
   transform: scale(1.2);
 }
 
+/* Totals row styling */
+.totals-row {
+  border-top: 2px solid #333 !important;
+  background-color: #f0f4f8 !important;
+}
+
+.totals-row td {
+  padding: 12px 8px !important;
+  border-bottom: 2px solid #333 !important;
+}
+
+.totals-row:hover {
+  background-color: #e8eef5 !important;
+}
+
 /* Fix text visibility on dark background */
 .section h2 {
   color: #f1f5f9;

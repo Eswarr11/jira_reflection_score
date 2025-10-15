@@ -598,6 +598,21 @@ header h1 {
   transform: translateX(2px);
 }
 
+/* Totals row styling */
+.totals-row {
+  border-top: 2px solid #333 !important;
+  background-color: #f0f4f8 !important;
+}
+
+.totals-row td {
+  padding: 12px 8px !important;
+  border-bottom: 2px solid #333 !important;
+}
+
+.totals-row:hover {
+  background-color: #e8eef5 !important;
+}
+
 .jira-link-icon {
   font-size: 10px;
 }
