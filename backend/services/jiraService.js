@@ -275,7 +275,8 @@ class JiraService {
       'Ready for Release',
       'Done',
       'Ready to Test',
-      'Testing'
+      'Testing',
+      'Closed'
     ];
     return fixedStatuses.some(s => status.toLowerCase() === s.toLowerCase());
   }

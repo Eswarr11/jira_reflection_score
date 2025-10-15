@@ -204,6 +204,7 @@ async function resetToDefaults() {
   document.getElementById('endDate').value = '2025-10-13';
   document.getElementById('thriveSquad').value = 'OKR';
   
+  // Set default checked statuses (DEFERRED and Invalid, but not Closed)
   document.querySelectorAll('.checkbox-group input').forEach(cb => {
     cb.checked = true;
   });
@@ -543,7 +544,7 @@ function buildJqlForPriority(priority, statusType) {
   }
   
   if (statusType === 'fixed') {
-    queryParts.push(`status IN ("Ready for Release", Done, "Ready to Test", Testing)`);
+    queryParts.push(`status IN ("Ready for Release", Done, "Ready to Test", Testing, Closed)`);
   } else if (statusType === 'open') {
     queryParts.push(`status NOT IN ("Ready for Release", Done, "Ready to Test", Testing, Closed, DEFERRED, Invalid)`);
   } else {
