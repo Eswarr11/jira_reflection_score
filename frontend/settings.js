@@ -1,19 +1,9 @@
-// Options/Settings script for Jira Score Calculator
+// Settings script for Jira Score Calculator
+// Handles credential input and user preferences
 
-// ============================================================================
-// DEFAULT JIRA CREDENTIALS (COMMENT OUT BEFORE PUSHING TO GIT)
-// ============================================================================
-const DEFAULT_CREDENTIALS = {
-  jiraUrl: 'https://yourdomain.atlassian.net',
-  jiraEmail: 'abc@company.com',
-  jiraApiToken: 'Your API token'
-};
-// ============================================================================
+const API_BASE_URL = '/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initialize default credentials if not already set
-  await initializeDefaultCredentials();
-  
   // Load saved settings
   await loadSettings();
   
@@ -21,47 +11,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('saveSettings').addEventListener('click', saveSettings);
   document.getElementById('testConnection').addEventListener('click', testConnection);
   document.getElementById('scoringMethod').addEventListener('change', handleScoringMethodChange);
+  document.getElementById('backToMain').addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
 });
 
-// Initialize default credentials (priority: saved credentials > default credentials)
-async function initializeDefaultCredentials() {
-  const settings = await chrome.storage.sync.get([
-    'jiraUrl',
-    'jiraEmail',
-    'jiraApiToken'
-  ]);
-  
-  // Only set defaults if credentials are not already saved
-  // This ensures saved credentials always take priority
-  const needsInitialization = !settings.jiraUrl || !settings.jiraEmail || !settings.jiraApiToken;
-  
-  if (needsInitialization && DEFAULT_CREDENTIALS) {
-    await chrome.storage.sync.set({
-      jiraUrl: DEFAULT_CREDENTIALS.jiraUrl,
-      jiraEmail: DEFAULT_CREDENTIALS.jiraEmail,
-      jiraApiToken: DEFAULT_CREDENTIALS.jiraApiToken
-    });
-    console.log('Default credentials initialized');
-  }
+// Get settings from localStorage
+function getStoredSettings() {
+  const stored = localStorage.getItem('jiraSettings');
+  return stored ? JSON.parse(stored) : {};
 }
 
-// Load settings from storage
+// Load settings from localStorage
 async function loadSettings() {
-  const settings = await chrome.storage.sync.get([
-    'jiraUrl',
-    'jiraEmail',
-    'jiraApiToken',
-    'scoringMethod',
-    'customField',
-    'priorityWeights',
-    'credentialsInitialized'
-  ]);
+  const settings = getStoredSettings();
   
-  // Populate form fields with saved settings
-  document.getElementById('jiraUrl').value = settings.jiraUrl || '';
-  document.getElementById('jiraEmail').value = settings.jiraEmail || '';
-  document.getElementById('jiraApiToken').value = settings.jiraApiToken || '';
+  // Load Jira credentials
+  if (settings.jiraUrl) document.getElementById('jiraUrl').value = settings.jiraUrl;
+  if (settings.jiraEmail) document.getElementById('jiraEmail').value = settings.jiraEmail;
+  if (settings.jiraApiToken) document.getElementById('jiraApiToken').value = settings.jiraApiToken;
   
+  // Load scoring preferences
   const scoringMethod = settings.scoringMethod || 'priority';
   document.getElementById('scoringMethod').value = scoringMethod;
   handleScoringMethodChange({ target: { value: scoringMethod } });
@@ -70,7 +40,6 @@ async function loadSettings() {
     document.getElementById('customField').value = settings.customField;
   }
   
-  // Load priority weights
   const defaultWeights = {
     'Highest': 5,
     'High': 4,
@@ -87,7 +56,7 @@ async function loadSettings() {
   document.getElementById('weightLowest').value = weights['Lowest'] || 1;
 }
 
-// Save settings to storage
+// Save settings
 async function saveSettings() {
   const jiraUrl = document.getElementById('jiraUrl').value.trim();
   const jiraEmail = document.getElementById('jiraEmail').value.trim();
@@ -95,7 +64,6 @@ async function saveSettings() {
   const scoringMethod = document.getElementById('scoringMethod').value;
   const customField = document.getElementById('customField').value.trim();
   
-  // Validate inputs
   if (!jiraUrl || !jiraEmail || !jiraApiToken) {
     showMessage('Please fill in all Jira configuration fields', 'error');
     return;
@@ -104,19 +72,16 @@ async function saveSettings() {
   // Validate and clean URL format
   try {
     let url = jiraUrl;
-    // Remove trailing slash if present
     if (url.endsWith('/')) {
       url = url.slice(0, -1);
     }
     new URL(url);
-    // Update the input with cleaned URL
     document.getElementById('jiraUrl').value = url;
   } catch (e) {
     showMessage('Please enter a valid URL', 'error');
     return;
   }
   
-  // Collect priority weights
   const priorityWeights = {
     'Highest': parseInt(document.getElementById('weightHighest').value) || 5,
     'High': parseInt(document.getElementById('weightHigh').value) || 4,
@@ -125,17 +90,57 @@ async function saveSettings() {
     'Lowest': parseInt(document.getElementById('weightLowest').value) || 1
   };
   
-  // Save to storage
-  await chrome.storage.sync.set({
+  // Store credentials locally for display
+  const settings = {
     jiraUrl,
     jiraEmail,
     jiraApiToken,
     scoringMethod,
     customField,
     priorityWeights
-  });
+  };
   
-  showMessage('Settings saved successfully!', 'success');
+  localStorage.setItem('jiraSettings', JSON.stringify(settings));
+  
+  // Also save user preferences separately (non-credentials)
+  localStorage.setItem('userPreferences', JSON.stringify({
+    scoringMethod,
+    customField,
+    priorityWeights
+  }));
+  
+  showMessage('Saving credentials to backend...', 'info');
+  
+  try {
+    // Send credentials to backend and get auth cookie
+    const response = await fetch(`${API_BASE_URL}/save-credentials`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',  // Important: Include cookies
+      body: JSON.stringify({
+        jiraUrl,
+        jiraEmail,
+        jiraApiToken
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      showMessage('✅ Settings saved successfully! Auth cookie set. Redirecting...', 'success');
+      
+      // Redirect to main page after successful save
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    } else {
+      showMessage('Failed to save credentials: ' + result.error, 'error');
+    }
+  } catch (error) {
+    showMessage('Error saving credentials: ' + error.message, 'error');
+  }
 }
 
 // Test Jira connection
@@ -145,27 +150,29 @@ async function testConnection() {
   const jiraApiToken = document.getElementById('jiraApiToken').value.trim();
   
   if (!jiraUrl || !jiraEmail || !jiraApiToken) {
-    showMessage('Please fill in all Jira configuration fields', 'error');
+    showMessage('Please fill in all Jira configuration fields first', 'error');
     return;
   }
   
   showMessage('Testing connection...', 'info');
   
   try {
-    const response = await new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          action: 'testConnection',
-          data: { jiraUrl, jiraEmail, jiraApiToken }
-        },
-        resolve
-      );
+    // For test connection, we need to send credentials
+    const response = await fetch(`${API_BASE_URL}/test-connection`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ jiraUrl, jiraEmail, jiraApiToken })
     });
     
-    if (response.success) {
-      showMessage(response.message, 'success');
+    const result = await response.json();
+    
+    if (result.success) {
+      showMessage(result.message, 'success');
     } else {
-      showMessage(response.error, 'error');
+      showMessage(result.error, 'error');
     }
   } catch (error) {
     showMessage('Connection test failed: ' + error.message, 'error');
@@ -189,7 +196,6 @@ function showMessage(text, type) {
   messageEl.className = 'message ' + type;
   messageEl.classList.remove('hidden');
   
-  // Auto-hide after 5 seconds for success messages
   if (type === 'success') {
     setTimeout(() => {
       messageEl.classList.add('hidden');

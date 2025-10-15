@@ -1,0 +1,35 @@
+{
+  "name": "jira-score-calculator",
+  "version": "3.0.0",
+  "description": "Jira Ticket Score Calculator - Secure Full-Stack Web Application",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "NODE_ENV=development node backend/server.js",
+    "start:debug": "NODE_ENV=development node --inspect backend/server.js"
+  },
+  "keywords": [
+    "jira",
+    "calculator",
+    "score",
+    "quality",
+    "ticket-management",
+    "express",
+    "fullstack"
+  ],
+  "author": "Eswar",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/jira-score-calculator.git"
+  }
+}

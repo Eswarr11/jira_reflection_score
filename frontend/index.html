@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jira Score Calculator</title>
-  <link rel="stylesheet" href="styles/popup.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Jira Score Calculator - Web App</title>
+  <link rel="stylesheet" href="styles/popup.css?v=3.0">
+  <link rel="stylesheet" href="styles/webapp.css?v=3.0">
 </head>
 <body>
   <div class="container">
     <header>
       <div class="header-content">
         <h1>Jira Ticket Score Calculator</h1>
-        <button id="expandBtn" class="expand-btn" title="Open in full screen tab">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-          </svg>
-          <span>Expand</span>
-        </button>
       </div>
     </header>
     
@@ -118,7 +116,7 @@
         <div id="status" class="status-message hidden"></div>
         <div id="loading" class="loading hidden">
           <div class="spinner"></div>
-          <p>Loading tickets from Jira...</p>
+          <p id="loadingMessage">Loading tickets from Jira...</p>
           <p style="font-size: 12px; color: #888; margin-top: 5px;">This may take a moment for large datasets</p>
         </div>
         
@@ -204,6 +202,7 @@
     </footer>
   </div>
 
-  <script src="popup.js"></script>
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>
+
