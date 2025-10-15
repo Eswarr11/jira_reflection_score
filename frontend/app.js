@@ -416,16 +416,35 @@ function displayResults(data) {
     });
     
     // Add totals row
+    const totalJqlAll = buildJqlForPriority('all', 'all');
+    const totalJqlFixed = buildJqlForPriority('all', 'fixed');
+    const totalJqlOpen = buildJqlForPriority('all', 'open');
+    
     const totalsRow = document.createElement('tr');
     totalsRow.className = 'totals-row';
     totalsRow.innerHTML = `
       <td style="font-weight: bold;">Total</td>
       <td></td>
-      <td style="font-weight: bold;">${escapeHtml(totalCount)}</td>
+      <td style="font-weight: bold;">
+        <div class="cell-with-link">
+          <span>${escapeHtml(totalCount)}</span>
+          <a href="${escapeHtml(jiraUrl)}/issues/?jql=${encodeURIComponent(totalJqlAll)}" target="_blank" class="jira-link">↗</a>
+        </div>
+      </td>
       <td style="font-weight: bold;">${escapeHtml(totalScore)}</td>
-      <td style="font-weight: bold;">${escapeHtml(fixedCount)}</td>
+      <td style="font-weight: bold;">
+        <div class="cell-with-link">
+          <span>${escapeHtml(fixedCount)}</span>
+          <a href="${escapeHtml(jiraUrl)}/issues/?jql=${encodeURIComponent(totalJqlFixed)}" target="_blank" class="jira-link">↗</a>
+        </div>
+      </td>
       <td style="font-weight: bold;">${escapeHtml(fixedScore)}</td>
-      <td style="font-weight: bold;">${escapeHtml(openCount)}</td>
+      <td style="font-weight: bold;">
+        <div class="cell-with-link">
+          <span>${escapeHtml(openCount)}</span>
+          <a href="${escapeHtml(jiraUrl)}/issues/?jql=${encodeURIComponent(totalJqlOpen)}" target="_blank" class="jira-link">↗</a>
+        </div>
+      </td>
     `;
     breakdownBody.appendChild(totalsRow);
   }
