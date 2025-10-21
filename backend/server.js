@@ -1,66 +1,86 @@
-// Main server entry point for Jira Score Calculator
-
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const path = require('path');
-const config = require('./config/env');
-const jiraRoutes = require('./routes/jiraRoutes');
-const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+require('dotenv').config();
+
+// Import middleware
+const authMiddleware = require('./middleware/auth');
+const { errorHandler } = require('./middleware/errorHandler');
 const { securityHeaders, sanitizeRequest, blockScriptInjection } = require('./middleware/security');
+const { validateRequestBody } = require('./middleware/validation');
+
+// Import routes
+const jiraRoutes = require('./routes/jiraRoutes');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Security middleware (FIRST - before any other middleware)
+// Security middleware
 app.use(securityHeaders);
-
-// Middleware
-app.use(cors({
-  origin: config.corsOrigin,
-  credentials: true  // Important: Allow cookies to be sent
-}));
-app.use(cookieParser());  // Parse cookies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// XSS Protection middleware
 app.use(sanitizeRequest);
 app.use(blockScriptInjection);
 
-// Request logging removed for production
+// CORS configuration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://yourdomain.com'] 
+    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
-// Serve static frontend files
-const frontendPath = path.join(__dirname, '../frontend');
-app.use(express.static(frontendPath));
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// API Routes
-app.use(config.api.prefix, jiraRoutes);
+// Cookie parsing middleware
+app.use(cookieParser());
 
-// Serve index.html for root and any unmatched routes (SPA support)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
-});
+// API routes
+app.use('/api', jiraRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
-    status: 'ok', 
+    status: 'OK', 
     timestamp: new Date().toISOString(),
-    environment: config.nodeEnv,
-    security: 'XSS protection enabled',
-    auth: 'Cookie-based authentication'
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
-// 404 handler
-app.use(notFoundHandler);
+// Serve static files from frontend directory (original HTML/CSS/JS)
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Error handler (must be last)
+// Serve main app for root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// Serve settings page
+app.get('/settings.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/settings.html'));
+});
+
+// Error handling middleware (must be last)
 app.use(errorHandler);
 
 // Start server
-app.listen(config.port, () => {
-  // Server started
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`🌐 Application: http://localhost:${PORT}`);
 });
 
-module.exports = app;
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 SIGINT received, shutting down gracefully');
+  process.exit(0);
+});
