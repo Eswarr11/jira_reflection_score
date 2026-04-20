@@ -128,7 +128,7 @@ function buildTegQuery() {
   const issueType = sanitizeText(document.getElementById('issueType').value);
   const startDate = sanitizeText(document.getElementById('startDate').value);
   const endDate = sanitizeText(document.getElementById('endDate').value);
-  const thrive_module = sanitizeText(document.getElementById('thrive_module').value.trim());
+  const thrive_module = sanitizeText(document.getElementById('thriveSquad').value.trim());
   
   const excludedStatuses = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
     .map(cb => sanitizeText(cb.value));
