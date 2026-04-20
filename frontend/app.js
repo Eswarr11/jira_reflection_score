@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   
   // Query builder inputs
-  const inputs = ['projectName', 'issueType', 'startDate', 'endDate', 'thriveSquad'];
+  const inputs = ['projectName', 'issueType', 'startDate', 'endDate', 'thrive_module'];
   inputs.forEach(id => {
     const element = document.getElementById(id);
     if (element) {
@@ -128,7 +128,7 @@ function buildTegQuery() {
   const issueType = sanitizeText(document.getElementById('issueType').value);
   const startDate = sanitizeText(document.getElementById('startDate').value);
   const endDate = sanitizeText(document.getElementById('endDate').value);
-  const thriveSquad = sanitizeText(document.getElementById('thriveSquad').value.trim());
+  const thrive_module = sanitizeText(document.getElementById('thrive_module').value.trim());
   
   const excludedStatuses = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
     .map(cb => sanitizeText(cb.value));
@@ -139,7 +139,7 @@ function buildTegQuery() {
   if (startDate) queryParts.push(`created >= "${startDate}"`);
   if (endDate) queryParts.push(`created <= "${endDate}"`);
   if (issueType) queryParts.push(`type = ${issueType}`);
-  if (thriveSquad) queryParts.push(`"thrive-squad[dropdown]" = ${thriveSquad}`);
+  if (thrive_module) queryParts.push(`"thrive-module[dropdown]" = ${thrive_module}`);
   if (excludedStatuses.length > 0) queryParts.push(`status NOT IN (${excludedStatuses.join(', ')})`);
   
   let jql;
@@ -168,7 +168,7 @@ async function saveFilters() {
     issueType: document.getElementById('issueType').value,
     startDate: document.getElementById('startDate').value,
     endDate: document.getElementById('endDate').value,
-    thriveSquad: document.getElementById('thriveSquad').value,
+    thrive_module: document.getElementById('thrive_module').value,
     excludedStatuses: Array.from(document.querySelectorAll('.checkbox-group input:checked'))
       .map(cb => cb.value)
   };
@@ -185,7 +185,7 @@ async function loadSavedFilters() {
     if (savedFilters.issueType !== undefined) document.getElementById('issueType').value = savedFilters.issueType;
     if (savedFilters.startDate !== undefined) document.getElementById('startDate').value = savedFilters.startDate;
     if (savedFilters.endDate !== undefined) document.getElementById('endDate').value = savedFilters.endDate;
-    if (savedFilters.thriveSquad !== undefined) document.getElementById('thriveSquad').value = savedFilters.thriveSquad;
+    if (savedFilters.thrive_module !== undefined) document.getElementById('thrive_module').value = savedFilters.thrive_module;
     
     if (savedFilters.excludedStatuses) {
       document.querySelectorAll('.checkbox-group input').forEach(cb => {
@@ -202,7 +202,7 @@ async function resetToDefaults() {
   document.getElementById('issueType').value = 'Bug';
   document.getElementById('startDate').value = '2025-08-25';
   document.getElementById('endDate').value = '2025-10-13';
-  document.getElementById('thriveSquad').value = 'OKR';
+  document.getElementById('thrive_module').value = 'OKR';
   
   // Set default checked statuses (DEFERRED and Invalid, but not Closed)
   document.querySelectorAll('.checkbox-group input').forEach(cb => {
@@ -224,7 +224,7 @@ function buildSupportTicketsQuery() {
   const project = sanitizeText(document.getElementById('projectName').value.trim());
   const startDate = sanitizeText(document.getElementById('startDate').value);
   const endDate = sanitizeText(document.getElementById('endDate').value);
-  const thriveSquad = sanitizeText(document.getElementById('thriveSquad').value.trim());
+  const thrive_module = sanitizeText(document.getElementById('thrive_module').value.trim());
   
   let queryParts = [];
   
@@ -232,7 +232,7 @@ function buildSupportTicketsQuery() {
   if (startDate) queryParts.push(`created >= "${startDate}"`);
   if (endDate) queryParts.push(`created <= "${endDate}"`);
   queryParts.push('type = Support');
-  if (thriveSquad) queryParts.push(`"thrive-squad[dropdown]" = ${thriveSquad}`);
+  if (thrive_module) queryParts.push(`"thrive-module[dropdown]" = ${thrive_module}`);
   
   let jql = queryParts.join(' AND ');
   if (jql) {
@@ -529,7 +529,7 @@ function buildJqlForPriority(priority, statusType) {
   const issueType = sanitizeText(document.getElementById('issueType').value);
   const startDate = sanitizeText(document.getElementById('startDate').value);
   const endDate = sanitizeText(document.getElementById('endDate').value);
-  const thriveSquad = sanitizeText(document.getElementById('thriveSquad').value.trim());
+  const thrive_module = sanitizeText(document.getElementById('thrive_module').value.trim());
   
   let queryParts = [];
   
@@ -537,7 +537,7 @@ function buildJqlForPriority(priority, statusType) {
   if (startDate) queryParts.push(`created >= "${startDate}"`);
   if (endDate) queryParts.push(`created <= "${endDate}"`);
   if (issueType) queryParts.push(`type = ${issueType}`);
-  if (thriveSquad) queryParts.push(`"thrive-squad[dropdown]" = ${thriveSquad}`);
+  if (thrive_module) queryParts.push(`"thrive-module[dropdown]" = ${thrive_module}`);
   
   if (priority !== 'all') {
     queryParts.push(`priority = ${priority}`);
