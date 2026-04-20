@@ -139,7 +139,7 @@ function buildTegQuery() {
   if (startDate) queryParts.push(`created >= "${startDate}"`);
   if (endDate) queryParts.push(`created <= "${endDate}"`);
   if (issueType) queryParts.push(`type = ${issueType}`);
-  if (thrive_module) queryParts.push(`"thrive-module[dropdown]" = ${thrive_module}`);
+  if (thrive_module) queryParts.push(`"thrive_module[dropdown]" = ${thrive_module}`);
   if (excludedStatuses.length > 0) queryParts.push(`status NOT IN (${excludedStatuses.join(', ')})`);
   
   let jql;
@@ -232,7 +232,7 @@ function buildSupportTicketsQuery() {
   if (startDate) queryParts.push(`created >= "${startDate}"`);
   if (endDate) queryParts.push(`created <= "${endDate}"`);
   queryParts.push('type = Support');
-  if (thrive_module) queryParts.push(`"thrive-module[dropdown]" = ${thrive_module}`);
+  if (thrive_module) queryParts.push(`"thrive_module[dropdown]" = ${thrive_module}`);
   
   let jql = queryParts.join(' AND ');
   if (jql) {
@@ -537,7 +537,7 @@ function buildJqlForPriority(priority, statusType) {
   if (startDate) queryParts.push(`created >= "${startDate}"`);
   if (endDate) queryParts.push(`created <= "${endDate}"`);
   if (issueType) queryParts.push(`type = ${issueType}`);
-  if (thrive_module) queryParts.push(`"thrive-module[dropdown]" = ${thrive_module}`);
+  if (thrive_module) queryParts.push(`"thrive_module[dropdown]" = ${thrive_module}`);
   
   if (priority !== 'all') {
     queryParts.push(`priority = ${priority}`);
