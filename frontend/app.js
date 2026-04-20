@@ -168,7 +168,7 @@ async function saveFilters() {
     issueType: document.getElementById('issueType').value,
     startDate: document.getElementById('startDate').value,
     endDate: document.getElementById('endDate').value,
-    thrive_module: document.getElementById('thrive_module').value,
+    thrive_module: document.getElementById('thriveSquad').value,
     excludedStatuses: Array.from(document.querySelectorAll('.checkbox-group input:checked'))
       .map(cb => cb.value)
   };
@@ -185,7 +185,7 @@ async function loadSavedFilters() {
     if (savedFilters.issueType !== undefined) document.getElementById('issueType').value = savedFilters.issueType;
     if (savedFilters.startDate !== undefined) document.getElementById('startDate').value = savedFilters.startDate;
     if (savedFilters.endDate !== undefined) document.getElementById('endDate').value = savedFilters.endDate;
-    if (savedFilters.thrive_module !== undefined) document.getElementById('thrive_module').value = savedFilters.thrive_module;
+    if (savedFilters.thrive_module !== undefined) document.getElementById('thriveSquad').value = savedFilters.thrive_module;
     
     if (savedFilters.excludedStatuses) {
       document.querySelectorAll('.checkbox-group input').forEach(cb => {
@@ -202,7 +202,7 @@ async function resetToDefaults() {
   document.getElementById('issueType').value = 'Bug';
   document.getElementById('startDate').value = '2025-08-25';
   document.getElementById('endDate').value = '2025-10-13';
-  document.getElementById('thrive_module').value = 'OKR';
+  document.getElementById('thriveSquad').value = 'OKR';
   
   // Set default checked statuses (DEFERRED and Invalid, but not Closed)
   document.querySelectorAll('.checkbox-group input').forEach(cb => {
@@ -224,7 +224,7 @@ function buildSupportTicketsQuery() {
   const project = sanitizeText(document.getElementById('projectName').value.trim());
   const startDate = sanitizeText(document.getElementById('startDate').value);
   const endDate = sanitizeText(document.getElementById('endDate').value);
-  const thrive_module = sanitizeText(document.getElementById('thrive_module').value.trim());
+  const thrive_module = sanitizeText(document.getElementById('thriveSquad').value.trim());
   
   let queryParts = [];
   
@@ -529,7 +529,7 @@ function buildJqlForPriority(priority, statusType) {
   const issueType = sanitizeText(document.getElementById('issueType').value);
   const startDate = sanitizeText(document.getElementById('startDate').value);
   const endDate = sanitizeText(document.getElementById('endDate').value);
-  const thrive_module = sanitizeText(document.getElementById('thrive_module').value.trim());
+  const thrive_module = sanitizeText(document.getElementById('thriveSquad').value.trim());
   
   let queryParts = [];
   
