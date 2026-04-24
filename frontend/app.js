@@ -132,6 +132,8 @@ function buildTegQuery() {
   
   const excludedStatuses = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
     .map(cb => sanitizeText(cb.value));
+
+  
   
   let queryParts = [];
   
@@ -204,7 +206,7 @@ async function resetToDefaults() {
   document.getElementById('endDate').value = '2025-10-13';
   document.getElementById('thriveSquad').value = 'OKR';
   
-  // Set default checked statuses (DEFERRED and Invalid, but not Closed)
+  // Set default checked statuses (exclude DEFERRED, Invalid, Closed from results)
   document.querySelectorAll('.checkbox-group input').forEach(cb => {
     cb.checked = true;
   });
