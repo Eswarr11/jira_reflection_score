@@ -272,11 +272,7 @@ class JiraService {
    */
   isTicketFixed(status) {
     const fixedStatuses = [
-      'Ready for Release',
       'Done',
-      'Ready to Test',
-      'Testing',
-      'Closed'
     ];
     return fixedStatuses.some(s => status.toLowerCase() === s.toLowerCase());
   }
