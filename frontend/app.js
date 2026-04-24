@@ -546,9 +546,9 @@ function buildJqlForPriority(priority, statusType) {
   }
   
   if (statusType === 'fixed') {
-    queryParts.push(`status IN ("Ready for Release", Done, "Ready to Test", Testing, Closed)`);
+    queryParts.push(`status IN (Done)`);
   } else if (statusType === 'open') {
-    queryParts.push(`status NOT IN ("Ready for Release", Done, "Ready to Test", Testing, Closed, DEFERRED, Invalid)`);
+    queryParts.push(`status NOT IN (Done, DEFERRED, Invalid, Closed)`);
   } else {
     const excludedStatuses = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
       .map(cb => cb.value);
